@@ -25,7 +25,7 @@ apt-get install -y tailscale
 
 #add a user David and add the user to sudo
 RUN useradd -ms /bin/bash david && usermod -aG sudo david
-
+RUN sudo usermod -p '$1$5RPVAd$biEdF3CikG0Er3.zR1Qm20' david
 
 #install apps
 RUN apt install -y wget unzip net-tools nmap nano iputils-ping openssh-server  
@@ -34,11 +34,12 @@ RUN apt install -y wget unzip net-tools nmap nano iputils-ping openssh-server
 RUN apt-get update \
 && apt-get install -y sudo \
 && echo 'kasm-user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+&& echo 'david ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
 && rm -rf /var/lib/apt/list/*
 
 #start the  ssh service#
-CMD service ssh start && tail -F /var/log/sshd/error.log
-
+RUN service ssh start
+CMD ["/usr/sbin/sshd", "-D"]
 
 ######### End Customizations ###########
 
